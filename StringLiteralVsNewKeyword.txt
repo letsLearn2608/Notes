@@ -1,0 +1,193 @@
+String Literal
+
+Example:
+
+String s1 = "Hello";
+String s2 = "Hello";
+
+
+Key Points:
+
+Memory Location:
+
+Stored in String Pool (a special area in JVM memory).
+
+JVM checks the pool first; if the string already exists, it reuses the reference.
+
+Reference Check:
+
+System.out.println(s1 == s2); // true
+
+
+== returns true because both s1 and s2 point to the same object in the String Pool.
+
+Efficiency:
+
+Memory-efficient because duplicates are avoided in the pool.
+
+Recommended for strings that repeat frequently.
+
+2️⃣ String using new Keyword
+
+Example:
+
+String s3 = new String("Hello");
+String s4 = new String("Hello");
+
+
+Key Points:
+
+Memory Location:
+
+Creates a new object in Heap memory (outside the String Pool).
+
+Even if "Hello" exists in the String Pool, a new object is always created in Heap.
+
+Reference Check:
+
+System.out.println(s3 == s4); // false
+
+
+== returns false because s3 and s4 are different objects, even though their content is the same.
+
+Content Check:
+
+System.out.println(s3.equals(s4)); // true
+
+
+equals() checks actual string content, so it returns true.
+
+3️⃣ Key Differences Table
+Feature	String Literal	String using new
+Memory Location	String Pool	Heap memory
+Object Creation	Reuses existing if available	Always creates a new object
+== Comparison	true for same content	false (different references)
+equals() Comparison	true if content same	true if content same
+Memory Efficiency	High (shared pool)	Lower (multiple objects)
+4️⃣ Best Practice
+
+Use string literals for constants and repeated values → saves memory.
+
+Use new String() only if you explicitly need a new object reference (rare case).
+
+Example combining both:
+
+String s1 = "Hello";
+String s2 = new String("Hello");
+
+System.out.println(s1 == s2);      // false (different references)
+System.out.println(s1.equals(s2)); // true  (same content)
+
+
+Memory Areas in JVM
+
+When you run a Java program, the JVM divides memory mainly into:
+
+Heap Memory → stores objects (including String objects).
+
+String Constant Pool (SCP) → a special section inside Heap for storing unique string literals.
+
+🔹 Case 1: String Literal
+String s1 = "Hello";
+String s2 = "Hello";
+
+What happens step-by-step:
+
+JVM checks the String Pool to see if "Hello" exists.
+
+Since it’s the first time, JVM creates a new "Hello" object inside the String Pool.
+
+The reference s1 points to that pooled "Hello".
+
+When s2 is created, JVM finds "Hello" already exists in the pool →
+✅ It reuses the same object reference.
+
+So both s1 and s2 point to the same "Hello" in SCP.
+
+Memory Diagram:
+Heap Memory
+ ├── String Pool
+ │     └── "Hello" (used by s1, s2)
+ │
+ └── (other objects)
+
+Stack Memory
+ ├── s1 → "Hello" (String Pool)
+ └── s2 → "Hello" (String Pool)
+
+
+✅ s1 == s2 → true
+✅ s1.equals(s2) → true
+
+🔹 Case 2: String with new Keyword
+String s3 = new String("Hello");
+String s4 = new String("Hello");
+
+What happens:
+
+"Hello" (literal) → checked/created in String Pool (if not already there).
+
+new String("Hello") → forces JVM to create a new object in Heap, even though "Hello" already exists in the pool.
+
+Each new String() call creates a separate object in Heap.
+
+Memory Diagram:
+Heap Memory
+ ├── String Pool
+ │     └── "Hello"
+ │
+ ├── s3_obj → "Hello" (Heap copy)
+ └── s4_obj → "Hello" (Heap copy)
+
+Stack Memory
+ ├── s3 → s3_obj (Heap)
+ └── s4 → s4_obj (Heap)
+
+
+❌ s3 == s4 → false (different heap objects)
+✅ s3.equals(s4) → true (same content)
+
+🔹 Case 3: Interning the String
+
+If you want to move a heap string into the pool manually:
+
+String s5 = new String("Hello");
+String s6 = s5.intern();
+
+
+.intern() checks if "Hello" exists in the pool:
+
+If yes → returns the existing pooled reference.
+
+If not → adds it to the pool and returns that reference.
+
+So:
+
+s5 → heap object
+
+s6 → pooled "Hello"
+
+✅ s1 == s6 → true
+❌ s1 == s5 → false
+
+✅ Summary Table
+Concept	String Literal	new String()	.intern()
+Memory Location	String Pool	Heap	String Pool
+Duplicate Objects	No (shared)	Yes (new each time)	No
+Reference Equality	true for same literal	false	true (after intern)
+Content Equality	true	true	true
+Example	"Hello"	new String("Hello")	s.intern()
+🔹 Interview Tip
+
+If they ask:
+
+What happens when you write String s = new String("Hello");?
+
+You should say:
+
+This line creates two objects (in most cases):
+
+One "Hello" in the String Pool (if not already there).
+
+Another "Hello" in the Heap (because of new).
+The reference s points to the heap object.
